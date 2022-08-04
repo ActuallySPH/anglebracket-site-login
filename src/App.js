@@ -15,15 +15,17 @@ import 'react-toastify/dist/ReactToastify.css';
 function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const authentication = getAuth(app);
+
   let navigate = useNavigate();
   const handleAction = (e, id) => {
     e.preventDefault()
-    const authentication = getAuth(app);
     if (id === 1) {
       signInWithEmailAndPassword(authentication, email, password)
         .then((response) => {
           navigate('/home')
           sessionStorage.setItem('Auth Token', response._tokenResponse.refreshToken)
+          sessionStorage.setItem('Current User', JSON.stringify(response.user))
         })
         .catch((error) => {
           if(error.code === 'auth/wrong-password'){
