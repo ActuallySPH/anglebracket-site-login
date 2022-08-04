@@ -63,7 +63,7 @@ function App() {
       <>
         <Routes>
           <Route 
-            path='/'
+            path='/login'
             element={
               <Form
                 title="Login"

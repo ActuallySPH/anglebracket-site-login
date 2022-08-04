@@ -14,7 +14,7 @@ function Home() {
     let navigate = useNavigate();
     const handleLogout = () => {
         sessionStorage.removeItem('Auth Token');
-        navigate('/login')
+        navigate('/')
     }
     useEffect(() => {
         let authToken = sessionStorage.getItem('Auth Token')
