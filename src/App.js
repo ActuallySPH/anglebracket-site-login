@@ -62,7 +62,7 @@ function App() {
     <div className="App">
       <>
         <Routes>
-          <Route
+          <Route 
             path='/'
             component={
               <Form
