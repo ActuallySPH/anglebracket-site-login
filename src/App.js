@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import Form from './components/common/FormNew';
 import Home from './components/Home';
-//import app from './firebase-config'
+import app from './firebase-config'
 import {
   Routes,
   Route,
@@ -19,7 +19,7 @@ function App() {
   let navigate = useNavigate();
   const handleAction = (e, id) => {
     e.preventDefault()
-    const authentication = getAuth();
+    const authentication = getAuth(app);
     if (id === 1) {
       signInWithEmailAndPassword(authentication, email, password)
         .then((response) => {
