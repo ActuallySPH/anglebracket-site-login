@@ -64,7 +64,7 @@ function App() {
         <Routes>
           <Route
             path='/'
-            element={
+            component={
               <Form
                 title="Login"
                 setEmail={setEmail}
@@ -74,7 +74,7 @@ function App() {
           />
           <Route
             path='/register'
-            element={
+            component={
               <Form
                 title="Register"
                 setEmail={setEmail}
