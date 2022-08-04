@@ -76,7 +76,7 @@ function App() {
           <Route
             path='/register'
             element={
-              <FromNew
+              <Form
                 title="Register"
                 setEmail={setEmail}
                 setPassword={setPassword}
