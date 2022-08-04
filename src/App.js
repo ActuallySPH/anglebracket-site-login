@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import Form from './components/common/FormNew';
-import Home from './components/Home1';
+import Home from './components/Home';
 import {
   Routes,
   Route,
   useNavigate
 } from "react-router-dom";
-import { app } from './firebase-config';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -58,7 +57,7 @@ function App() {
     if (authToken) {
       navigate('/home')
     }
-  }, [])
+  }, [navigate])
   return (
     <div className="App">
       <>
