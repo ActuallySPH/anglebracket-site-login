@@ -8,6 +8,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 export default function Form({title, setPassword, setEmail, handleAction }) {
   return (
@@ -22,6 +23,12 @@ export default function Form({title, setPassword, setEmail, handleAction }) {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          {(() => {
+                    if(title === 'Register'){
+                      return(<LockOutlinedIcon />)
+                    }
+                  }
+                )()}
           </Avatar>
           <Typography component="h1" variant="h5">
             {title}
