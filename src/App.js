@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import Form from './components/common/FormNew';
 import Home from './components/Home';
-import app from './firebase-config'
+import {app} from './firebase-config'
 import {
   Routes,
   Route,
