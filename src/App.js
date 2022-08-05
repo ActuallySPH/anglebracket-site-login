@@ -50,12 +50,15 @@ function App() {
           sessionStorage.setItem('Current User', JSON.stringify(response.user))
         })
         .then(() => {
-          setDoc(doc(db,"anglebracket-collection", authentication.currentUser.uid), {
-            uid: authentication.currentUser.uid,
-            firstName: firstName,
-            lastName: lastName,
-          });
-          navigate('/home')
+
+          (async () => {
+            await setDoc(doc(db,"anglebracket-collection", authentication.currentUser.uid), {
+              uid: authentication.currentUser.uid,
+              firstName: firstName,
+              lastName: lastName,
+            });
+            navigate('/home')
+          })();
         })
         .catch((error) => {
           if (error.code === 'auth/email-already-in-use') {
