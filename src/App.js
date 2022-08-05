@@ -33,7 +33,6 @@ function App() {
           navigate('/home')
         })
         .catch((error) => {
-          console.log(error)
           if(error.code === 'auth/wrong-password'){
             toast.error('Please check the Password');
           }
@@ -47,7 +46,6 @@ function App() {
     }else if (id === 2) {
       createUserWithEmailAndPassword(authentication, email, password)
         .then((response) => {
-          console.log(authentication)
           sessionStorage.setItem('Auth Token', response._tokenResponse.refreshToken)
           sessionStorage.setItem('Current User', JSON.stringify(response.user))
         })
