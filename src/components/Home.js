@@ -24,6 +24,7 @@ function Home() {
     const [ fistName, setFirstName ] = useState('')
     const [ uid, setuid ] = useState('')
     const [ lastName, setLastName ] = useState('')
+    const [ loading, setLoading ] = useState(true)
 
 
     const handleLogout = () => {
@@ -45,6 +46,7 @@ function Home() {
                 const userDetails = doc.data();
                 setFirstName(userDetails.firstName)
                 setLastName(userDetails.lastName)
+                setLoading(false)
               });
             })();
         }
@@ -52,7 +54,7 @@ function Home() {
             navigate('/login')
         }
         
-    }, [navigate, uid])
+    }, [navigate, uid, loading])
   return (
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
@@ -105,7 +107,7 @@ function Home() {
                   gutterBottom
                   variant="h5"
                 >
-                  {fistName+ "-" +lastName}
+                  {loading ? "Loading....." : fistName+ "-" +lastName}
                 </Typography>
                 <Typography
                   color="textSecondary"
