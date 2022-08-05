@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import Form from './components/common/FormNew';
+import RegistrationForm from './components/common/Form';
 import Home from './components/Home';
-import {app} from './firebase-config'
+import {app, db} from './firebase-config'
 import {
   Routes,
   Route,
@@ -11,10 +12,14 @@ import {
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { doc, setDoc } from "firebase/firestore"; 
+
 
 function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const authentication = getAuth(app);
 
   let navigate = useNavigate();
@@ -23,11 +28,12 @@ function App() {
     if (id === 1) {
       signInWithEmailAndPassword(authentication, email, password)
         .then((response) => {
-          navigate('/home')
           sessionStorage.setItem('Auth Token', response._tokenResponse.refreshToken)
           sessionStorage.setItem('Current User', JSON.stringify(response.user))
+          navigate('/home')
         })
         .catch((error) => {
+          console.log(error)
           if(error.code === 'auth/wrong-password'){
             toast.error('Please check the Password');
           }
@@ -41,8 +47,17 @@ function App() {
     }else if (id === 2) {
       createUserWithEmailAndPassword(authentication, email, password)
         .then((response) => {
-          navigate('/home')
+          console.log(authentication)
           sessionStorage.setItem('Auth Token', response._tokenResponse.refreshToken)
+          sessionStorage.setItem('Current User', JSON.stringify(response.user))
+        })
+        .then(() => {
+          setDoc(doc(db,"anglebracket-collection", authentication.currentUser.uid), {
+            uid: authentication.currentUser.uid,
+            firstName: firstName,
+            lastName: lastName,
+          });
+          navigate('/home')
         })
         .catch((error) => {
           if (error.code === 'auth/email-already-in-use') {
@@ -77,10 +92,12 @@ function App() {
           <Route
             path='/register'
             element={
-              <Form
+              <RegistrationForm
                 title="Register"
                 setEmail={setEmail}
                 setPassword={setPassword}
+                setFirstName={setFirstName}
+                setLastName={setLastName}
                 handleAction={(e) => handleAction(e, 2)}
               />}
           />

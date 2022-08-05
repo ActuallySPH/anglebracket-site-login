@@ -16,12 +16,15 @@ import {
   Divider
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { collection, query, where, getDocs } from "firebase/firestore";
+import {db} from '../firebase-config'
 
 function Home() {
     let navigate = useNavigate();
-    const [ email, setEmail ] = useState('')
+    const [ fistName, setFirstName ] = useState('')
     const [ uid, setuid ] = useState('')
-    const [ emailVerified, setEmailVerified ] = useState('')
+    const [ lastName, setLastName ] = useState('')
+
 
     const handleLogout = () => {
         sessionStorage.removeItem('Auth Token');
@@ -29,22 +32,27 @@ function Home() {
     }
     useEffect(() => {
         let authToken = sessionStorage.getItem('Auth Token')
-
+        const user = JSON.parse(sessionStorage.getItem('Current User'))
+        setuid(user.uid)
         if (authToken) {
-            navigate('/home')
-            const user = JSON.parse(sessionStorage.getItem('Current User'))
-            if (user !== null) {
-              // The user object has basic properties such as display name, email, etc.
-              setuid(user.uid)
-              setEmail(user.email)
-              setEmailVerified(user.emailVerified)
-            }
+           // navigate('/home')
+            (async () => {
+              const q = query(collection(db, "anglebracket-collection"), where("uid", "==", uid));
+              const querySnapshot = await getDocs(q);
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                const userDetails = doc.data();
+                setFirstName(userDetails.firstName)
+                setLastName(userDetails.lastName)
+              });
+            })();
         }
-
-        if (!authToken) {
+        else{
             navigate('/login')
-        } 
-    }, [navigate, uid, email, emailVerified])
+        }
+        
+    }, [navigate, uid])
   return (
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
@@ -97,13 +105,13 @@ function Home() {
                   gutterBottom
                   variant="h5"
                 >
-                  {email}
+                  {fistName+ "-" +lastName}
                 </Typography>
                 <Typography
                   color="textSecondary"
                   variant="body2"
                 >
-                  {`${uid} ${emailVerified}`}
+                  {`${uid}`}
                 </Typography>
                 <Typography
                   color="textSecondary"
