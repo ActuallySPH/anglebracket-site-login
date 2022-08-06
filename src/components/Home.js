@@ -49,7 +49,7 @@ function Home() {
     const setUseruid = useCallback(() => {
           const user = JSON.parse(sessionStorage.getItem('Current User'));
           setuid(user.uid)
-    });
+    }, []);
 
     useEffect((setuid) => {
       let authToken = sessionStorage.getItem('Auth Token')
