@@ -7,30 +7,45 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
 import {
   Avatar,
   Box,
   Card,
   CardActions,
   CardContent,
-  Divider
+  Divider,
+  Grid
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, setDoc } from "firebase/firestore";
 import {db} from '../firebase-config'
 
 function Home() {
     let navigate = useNavigate();
-    const [ fistName, setFirstName ] = useState('')
+    const [ firstName, setFirstName ] = useState('')
     const [ uid, setuid ] = useState('')
     const [ lastName, setLastName ] = useState('')
     const [ loading, setLoading ] = useState(true)
+    const [ editState, setEditState ] = useState(false)
 
 
     const handleLogout = () => {
         sessionStorage.removeItem('Auth Token');
         navigate('/')
     }
+
+    const handleEditBtnClick = () => {
+      setEditState(true)
+    }
+
+    const  handleUpdateBtnClick = async () => {
+      const userRef =  doc(db, 'anglebracket-collection', uid);
+      await setDoc(userRef, { firstName: firstName, lastName: lastName, uid: uid});
+      setEditState(false)
+      setLoading(true)
+    }
+
     useEffect(() => {
         let authToken = sessionStorage.getItem('Auth Token')
         const user = JSON.parse(sessionStorage.getItem('Current User'))
@@ -102,13 +117,48 @@ function Home() {
                     width: 64
                   }}
                 />
-                <Typography
-                  color="textPrimary"
-                  gutterBottom
-                  variant="h5"
-                >
-                  {loading ? "Loading....." : fistName+ "-" +lastName}
-                </Typography>
+                {(() => {
+                  if (editState) {
+                    return(
+                      <Grid container spacing={1}>
+                          <Grid item xs={12} sm={6}>
+                            <TextField
+                                  variant="standard"
+                                  required
+                                  id="firstName"
+                                  label="First Name"
+                                  name="firstname"
+                                  autoComplete="firstname"
+                                  defaultValue={firstName}
+                                  onChange={(e) => setFirstName(e.target.value)}
+                                  autoFocus
+                                />
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <TextField
+                                  variant="standard"
+                                  required
+                                  id="lasttName"
+                                  label="Last Name"
+                                  name="lasttname"
+                                  autoComplete="lasttname"
+                                  defaultValue={lastName}
+                                  onChange={(e) => setLastName(e.target.value)}
+                                  autoFocus
+                                />
+                          </Grid>
+                        </Grid>
+                        )
+                    } else {
+                      return (<Typography
+                      color="textPrimary"
+                      gutterBottom
+                      variant="h5"
+                    >
+                      {loading ? "Loading....." : firstName+ "-" +lastName}
+                    </Typography>)
+                  }
+                })()}           
                 <Typography
                   color="textSecondary"
                   variant="body2"
@@ -128,8 +178,12 @@ function Home() {
                 color="primary"
                 fullWidth
                 variant="text"
-              >
-              <EditIcon/>
+                disabled={loading}
+                >
+              {editState? 
+              <span onClick={() => (handleUpdateBtnClick())}>Update</span>
+              :<EditIcon onClick={() => (handleEditBtnClick())
+              }/>}
               </Button>
             </CardActions>
           </Card>
