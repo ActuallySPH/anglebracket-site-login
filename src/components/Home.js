@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
@@ -46,18 +46,19 @@ function Home() {
       setLoading(true)
     }
 
-    useEffect(() => {
-        let authToken = sessionStorage.getItem('Auth Token')
-        const user = JSON.parse(sessionStorage.getItem('Current User'))
-        setuid(user.uid)
+    const setUseruid = useCallback(() => {
+          const user = JSON.parse(sessionStorage.getItem('Current User'));
+          setuid(user.uid)
+    });
+
+    useEffect((setuid) => {
+      let authToken = sessionStorage.getItem('Auth Token')
         if (authToken) {
-           // navigate('/home')
+            setUseruid();
             (async () => {
               const q = query(collection(db, "anglebracket-collection"), where("uid", "==", uid));
               const querySnapshot = await getDocs(q);
               querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data());
                 const userDetails = doc.data();
                 setFirstName(userDetails.firstName)
                 setLastName(userDetails.lastName)
@@ -66,10 +67,10 @@ function Home() {
             })();
         }
         else{
-            navigate('/login')
+            navigate('/')
         }
         
-    }, [navigate, uid, loading])
+    }, [navigate, uid, loading, setUseruid])
   return (
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
