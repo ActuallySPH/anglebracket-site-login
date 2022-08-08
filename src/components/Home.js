@@ -20,6 +20,8 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import { collection, query, where, getDocs, doc, setDoc } from "firebase/firestore";
 import {db} from '../firebase-config'
+import {HttpClient} from "../HttpClient"
+
 
 function Home() {
     let navigate = useNavigate();
@@ -28,6 +30,10 @@ function Home() {
     const [ lastName, setLastName ] = useState('')
     const [ loading, setLoading ] = useState(true)
     const [ editState, setEditState ] = useState(false)
+
+    const [apod, setApod] = useState({})
+    const [apodDisplayStatus, setApodDisplayStatus] = useState(false)
+
 
 
     const handleLogout = () => {
@@ -51,7 +57,13 @@ function Home() {
           setuid(user.uid)
     }, []);
 
-    useEffect((setuid) => {
+    const getApodData = useCallback(() => {
+          HttpClient.getApod().then(apodData => {
+            setApod(apodData.data)
+          })
+    }, []);
+
+    useEffect(() => {
       let authToken = sessionStorage.getItem('Auth Token')
         if (authToken) {
             setUseruid();
@@ -65,12 +77,13 @@ function Home() {
                 setLoading(false)
               });
             })();
+            getApodData();
         }
         else{
             navigate('/')
         }
         
-    }, [navigate, uid, loading, setUseruid])
+    }, [navigate, uid, loading, setUseruid, getApodData])
   return (
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
@@ -188,6 +201,27 @@ function Home() {
               </Button>
             </CardActions>
           </Card>
+
+          <Button 
+              type="submit"
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              onClick={() => setApodDisplayStatus(true)}>
+                Know your Astronmy Picture of the Day
+                </Button>
+          {apodDisplayStatus && (
+            apod && (
+              <article>
+                <h2>Astronmy Picture of the Day</h2>
+                <header>
+                  {apod.title} - <i>{apod.date}</i>
+                </header>
+                <img src={apod.url} alt="APOD" width="400" height="auto" />
+                <p>{apod.explanation}</p>
+              </article>
+            )
+          )}
+          
       </Container>
     </React.Fragment>
   );
